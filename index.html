@@ -1,0 +1,632 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Один день до пяти миллионов</title>
+<meta name="description" content="MasterVibe: как цифровая компания исполняет задачу основателя — заработать 5 000 000 ₸">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,380;0,9..144,460;0,9..144,600;0,9..144,760;0,9..144,900;1,9..144,460&family=Archivo:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap">
+<style>
+  /* Deliberately dark, single-world palette — matched to the real VibeFactory logo mark
+     (navy medallion, metallic gold wordmark/icons, a thread of teal in the flowing wave),
+     not the old site CSS. Glass panels over a layered gradient mesh with a grain overlay. */
+  :root {
+    --bg0: #0a1330; --bg1: #122152; --panel: rgba(22,38,78,0.5); --panel-solid: #142449;
+    --line: rgba(255,255,255,0.09); --line-strong: rgba(255,255,255,0.16);
+    --ink: #eef2fa; --ink-dim: #9aa8c9; --ink-faint: #67749c;
+    --coral: #d9b25c; --coral-soft: #ecd08f; --mint: #4fc3d1; --mint-soft: #a3e4ec;
+    --cta: #f0c15c; --cta-hover: #d9a93e;
+    --bad: #ff8a73; --good: #4fc3d1;
+    --serif: "Fraunces", Georgia, serif; --sans: "Archivo", "Helvetica Neue", Arial, sans-serif;
+    --mono: "JetBrains Mono", "SF Mono", Consolas, monospace;
+    color-scheme: dark;
+  }
+  * { box-sizing: border-box; }
+  html, body { background: var(--bg0); }
+  body {
+    color: var(--ink); font-family: var(--sans); line-height: 1.55; overflow-x: hidden;
+    background:
+      radial-gradient(60% 45% at 12% 0%, rgba(217,178,92,0.24), transparent 62%),
+      radial-gradient(55% 42% at 88% 10%, rgba(240,193,92,0.16), transparent 62%),
+      radial-gradient(65% 50% at 20% 48%, rgba(79,195,209,0.10), transparent 65%),
+      radial-gradient(60% 50% at 85% 62%, rgba(217,178,92,0.16), transparent 62%),
+      radial-gradient(70% 55% at 50% 100%, rgba(240,193,92,0.14), transparent 65%),
+      linear-gradient(180deg, var(--bg1), var(--bg0) 30%, var(--bg1) 70%, var(--bg0));
+    position: relative;
+  }
+  body::before {
+    content: ""; position: fixed; inset: 0; pointer-events: none; z-index: 0; opacity: 0.05; mix-blend-mode: overlay;
+    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='160' height='160'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/></filter><rect width='100%25' height='100%25' filter='url(%23n)'/></svg>");
+  }
+  .wrap { position: relative; z-index: 1; padding-left: max(20px, env(safe-area-inset-left, 0px)); padding-right: max(20px, env(safe-area-inset-right, 0px)); }
+  .col { max-width: 980px; margin: 0 auto; }
+  .col-narrow { max-width: 740px; margin: 0 auto; }
+  p { margin: 0; }
+  h1, h2, h3 { font-family: var(--serif); letter-spacing: -0.01em; text-wrap: balance; margin: 0; }
+  button { font-family: inherit; }
+
+  .eyebrow { font-family: var(--mono); font-size: 11px; letter-spacing: 0.16em; text-transform: uppercase; color: var(--coral-soft); }
+  .kicker { font-family: var(--mono); font-size: 11px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--ink-faint); margin-bottom: 12px; }
+
+  .glass { background: var(--panel); backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px); border: 1px solid var(--line); }
+
+  /* ---------- Hero / goal ring ---------- */
+  .hero { padding-block: 64px 10px; }
+  .hero-grid { display: grid; grid-template-columns: 1fr; gap: 36px; align-items: center; }
+  @media (min-width: 820px) { .hero-grid { grid-template-columns: 1.1fr 0.9fr; } }
+  .hero h1 { font-weight: 820; font-size: clamp(32px, 6vw, 50px); line-height: 1.05; margin-top: 16px; }
+  .hero h1 em { font-style: italic; font-weight: 460; color: var(--coral); }
+  .hero .lede { margin-top: 18px; max-width: 48ch; color: var(--ink-dim); font-size: 16px; }
+
+  .ring-wrap { display: flex; flex-direction: column; align-items: center; gap: 14px; }
+  .ring-svg { width: min(260px, 70vw); height: min(260px, 70vw); }
+  .ring-center { text-align: center; }
+  .ring-amount { font-family: var(--serif); font-weight: 760; font-size: clamp(26px, 4.4vw, 34px); color: var(--ink); font-variant-numeric: tabular-nums; }
+  .ring-target { font-family: var(--mono); font-size: 11.5px; color: var(--ink-faint); margin-top: 2px; }
+  .ring-pct { font-family: var(--mono); font-size: 12px; color: var(--mint); margin-top: 6px; }
+
+  .brief-row { display: grid; grid-template-columns: repeat(2,1fr); gap: 10px; margin-top: 30px; }
+  @media (min-width: 560px) { .brief-row { grid-template-columns: repeat(4,1fr); } }
+  .brief-tile { padding: 16px 16px; }
+  .brief-tile .v { font-family: var(--serif); font-weight: 700; font-size: 20px; color: var(--ink); font-variant-numeric: tabular-nums; }
+  .brief-tile .k { font-family: var(--mono); font-size: 10.5px; color: var(--ink-faint); margin-top: 4px; text-transform: uppercase; letter-spacing: 0.04em; }
+
+  /* ---------- Timeline simulator ---------- */
+  section { padding-block: 60px; position: relative; z-index: 1; }
+  .divider { border-top: 1px solid var(--line); }
+  .fade { opacity: 0; transform: translateY(16px); transition: opacity 0.6s ease, transform 0.6s ease; }
+  .fade.in { opacity: 1; transform: none; }
+  @media (prefers-reduced-motion: reduce) { .fade { opacity: 1; transform: none; transition: none; } }
+  h2.title { font-weight: 640; font-size: clamp(26px, 4.2vw, 38px); margin-bottom: 18px; max-width: 20ch; }
+  .lede-col { color: var(--ink-dim); max-width: 62ch; font-size: 16px; }
+
+  .railwrap { margin-top: 28px; overflow-x: auto; padding-bottom: 4px; }
+  .rail { display: flex; align-items: flex-start; gap: 0; min-width: 640px; }
+  .rail-node { display: flex; flex-direction: column; align-items: center; width: 92px; flex-shrink: 0; position: relative; }
+  .rail-node .dot { width: 38px; height: 38px; border-radius: 50%; display: grid; place-items: center; background: rgba(255,255,255,0.05); border: 1px solid var(--line); color: var(--ink-faint); transition: all 0.3s ease; }
+  .rail-node .dot svg { width: 18px; height: 18px; }
+  .rail-node .lbl { font-family: var(--mono); font-size: 10px; color: var(--ink-faint); margin-top: 8px; text-align: center; line-height: 1.3; transition: color 0.3s ease; }
+  .rail-line { flex: 1; height: 1px; background: var(--line); margin-top: 19px; position: relative; top: 0; min-width: 16px; transition: background 0.3s ease; }
+  .rail-node.done .dot { border-color: var(--coral-soft); color: var(--coral-soft); background: rgba(217,178,92,0.08); }
+  .rail-node.done .lbl { color: var(--ink-dim); }
+  .rail-node.active .dot { border-color: var(--coral); color: var(--bg0); background: var(--coral); box-shadow: 0 0 0 5px rgba(217,178,92,0.18); }
+  .rail-node.active .lbl { color: var(--coral); }
+  .rail-line.done { background: var(--coral-soft); }
+
+  .stepper { display: flex; gap: 6px; flex-wrap: wrap; margin: 18px 0 18px; }
+  .step-dot {
+    font-family: var(--mono); font-size: 10px; padding: 7px 10px; border: 1px solid var(--line);
+    background: transparent; color: var(--ink-faint); cursor: default; border-radius: 20px; transition: all 0.2s ease; white-space: nowrap;
+  }
+  .step-dot.done { color: var(--ink-dim); border-color: var(--line-strong); cursor: pointer; }
+  .step-dot.active { color: var(--bg0); background: var(--coral); border-color: var(--coral); }
+
+  .stage { padding: 30px 26px; border-radius: 6px; min-height: 380px; display: flex; flex-direction: column; overflow: hidden; }
+  .stage-head { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; margin-bottom: 18px; flex-wrap: wrap; }
+  .stage-time { font-family: var(--mono); font-size: 13px; color: var(--mint); }
+  .stage-role { font-family: var(--mono); font-size: 10.5px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--coral-soft); display: block; margin-top: 2px; }
+  .stage-title { font-family: var(--serif); font-weight: 640; font-size: clamp(19px, 3vw, 24px); margin-top: 4px; }
+  .stage-body { flex: 1; display: flex; flex-direction: column; justify-content: center; gap: 14px; }
+  .panel { display: none; }
+  .panel.active { display: flex; flex-direction: column; gap: 14px; flex: 1; justify-content: center; }
+  .reveal-line { opacity: 0; transform: translateY(6px); animation: lineIn 0.45s ease forwards; }
+  @keyframes lineIn { to { opacity: 1; transform: none; } }
+  @media (prefers-reduced-motion: reduce) { .reveal-line { animation: none; opacity: 1; transform: none; } }
+
+  .fact-card { background: rgba(255,255,255,0.04); border: 1px solid var(--line); padding: 15px 17px; font-size: 14.5px; color: var(--ink-dim); border-radius: 3px; }
+  .fact-card b { color: var(--ink); font-weight: 600; }
+  .example-tag { font-family: var(--mono); font-size: 10px; letter-spacing: 0.06em; text-transform: uppercase; color: var(--ink-faint); }
+
+  .draft-box {
+    background: rgba(255,255,255,0.04); border: 1px solid var(--line); padding: 18px 20px; font-size: 14.5px;
+    color: var(--ink); font-style: italic; font-family: var(--serif); line-height: 1.5; max-width: 60ch; border-radius: 3px;
+    cursor: text; transition: border-color 0.2s ease, background 0.2s ease; outline: none;
+  }
+  .draft-box:hover { border-color: var(--line-strong); }
+  .draft-box:focus { border-color: var(--coral); background: rgba(217,178,92,0.05); }
+  .edit-hint { font-family: var(--mono); font-size: 11px; color: var(--ink-faint); margin-bottom: 2px; }
+  .approve-row { display: flex; gap: 12px; align-items: center; flex-wrap: wrap; }
+  .btn {
+    font-family: var(--mono); font-size: 12.5px; letter-spacing: 0.03em; padding: 11px 20px;
+    border: 1px solid var(--cta); background: var(--cta); color: #0a1330; cursor: pointer;
+    border-radius: 3px; transition: transform 0.15s ease, opacity 0.15s ease, background 0.15s ease; font-weight: 600;
+  }
+  .btn:not(.ghost):hover { background: var(--cta-hover); border-color: var(--cta-hover); }
+  .btn:hover { transform: translateY(-1px); }
+  .btn.ghost { background: transparent; color: var(--ink-dim); border-color: var(--line-strong); }
+  .btn:disabled { opacity: 0.35; cursor: default; transform: none; }
+  .approved-note { font-family: var(--mono); font-size: 12px; color: var(--mint); display: none; align-items: center; gap: 6px; }
+  .approved-note.show { display: flex; }
+
+  .chat { display: flex; flex-direction: column; gap: 10px; max-width: 70ch; }
+  .bubble { max-width: 78%; padding: 10px 14px; border-radius: 12px; font-size: 14px; opacity: 0; transform: translateY(6px); transition: opacity 0.3s ease, transform 0.3s ease; }
+  .bubble.show { opacity: 1; transform: none; }
+  .bubble.client { align-self: flex-start; background: rgba(255,255,255,0.06); color: var(--ink); border: 1px solid var(--line); }
+  .bubble.ai { align-self: flex-end; background: rgba(79,195,209,0.18); color: var(--ink); border: 1px solid rgba(79,195,209,0.35); }
+  .typing { align-self: flex-end; font-family: var(--mono); font-size: 11px; color: var(--ink-faint); opacity: 0; transition: opacity 0.2s ease; }
+  .typing.show { opacity: 1; }
+
+  .kanban { display: flex; gap: 10px; flex-wrap: wrap; }
+  .kcol { flex: 1; min-width: 120px; }
+  .kcol-label { font-family: var(--mono); font-size: 10px; text-transform: uppercase; letter-spacing: 0.05em; color: var(--ink-faint); margin-bottom: 8px; }
+  .kcard { background: rgba(255,255,255,0.04); border: 1px solid var(--line); padding: 10px 12px; font-size: 13px; transition: opacity 0.4s ease, border-color 0.4s ease; opacity: 0.3; border-radius: 3px; }
+  .kcard.live { opacity: 1; border-color: var(--mint); }
+
+  .bignum { font-family: var(--serif); font-weight: 780; font-size: clamp(32px, 6vw, 48px); color: var(--cta); font-variant-numeric: tabular-nums; }
+  .summary-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px; }
+  @media (min-width: 560px) { .summary-grid { grid-template-columns: repeat(3, 1fr); } }
+  .summary-tile .label { font-size: 12px; color: var(--ink-faint); margin-top: 4px; }
+
+  .stage-foot { display: flex; justify-content: space-between; align-items: center; margin-top: 22px; gap: 12px; flex-wrap: wrap; }
+  .hint { font-family: var(--mono); font-size: 11.5px; color: var(--ink-faint); }
+
+  /* ---------- comparison ---------- */
+  .compare { margin-top: 36px; display: flex; flex-direction: column; gap: 2px; }
+  .compare-row { display: grid; grid-template-columns: 1fr 1fr; gap: 2px; }
+  .compare-head { display: grid; grid-template-columns: 1fr 1fr; gap: 2px; margin-bottom: 2px; }
+  .compare-head span { font-family: var(--mono); font-size: 11px; letter-spacing: 0.06em; text-transform: uppercase; padding: 10px 16px; }
+  .compare-head .left { color: var(--ink-faint); background: rgba(255,255,255,0.03); }
+  .compare-head .right { color: var(--mint); background: rgba(217,178,92,0.10); }
+  .ccell { padding: 16px 16px; font-size: 14px; }
+  .ccell.left { background: rgba(255,255,255,0.03); color: var(--ink-faint); }
+  .ccell.right { background: rgba(217,178,92,0.08); color: var(--ink); }
+  .ccell b { color: var(--ink); font-weight: 600; display: block; margin-bottom: 3px; font-size: 13px; font-family: var(--mono); text-transform: uppercase; letter-spacing: 0.03em; }
+  .compare-note { margin-top: 24px; font-family: var(--serif); font-style: italic; font-size: 17px; color: var(--ink-dim); max-width: 58ch; border-left: 2px solid var(--coral); padding-left: 16px; }
+
+  /* ---------- future trend ---------- */
+  .eras { margin-top: 40px; display: grid; grid-template-columns: 1fr; gap: 2px; }
+  @media (min-width: 820px) { .eras { grid-template-columns: repeat(4, 1fr); } }
+  .era { padding: 22px 18px; position: relative; }
+  .era .yr { font-family: var(--mono); font-size: 11px; color: var(--mint); letter-spacing: 0.04em; }
+  .era h3 { font-family: var(--sans); font-weight: 700; font-size: 15px; color: var(--ink); margin: 8px 0 6px; }
+  .era p { font-size: 13px; color: var(--ink-dim); }
+  .era.now { background: rgba(217,178,92,0.08); }
+  .era.now .yr { color: var(--coral); }
+  .era-arrow { display: none; }
+  @media (min-width: 820px) {
+    .era:not(:last-child)::after {
+      content: "→"; position: absolute; right: -14px; top: 50%; transform: translateY(-50%);
+      color: var(--ink-faint); font-family: var(--mono); z-index: 2; font-size: 14px;
+    }
+  }
+  .trend-argument { margin-top: 30px; display: grid; gap: 16px; max-width: 70ch; }
+  .trend-argument p { color: var(--ink-dim); font-size: 15.5px; }
+  .trend-argument p b { color: var(--ink); font-weight: 600; }
+
+  /* ---------- products ---------- */
+  .filters { display: flex; flex-wrap: wrap; gap: 8px; margin: 22px 0 26px; }
+  .filter-chip {
+    font-family: var(--mono); font-size: 11px; letter-spacing: 0.03em; padding: 7px 13px; cursor: pointer;
+    border: 1px solid var(--line); background: transparent; color: var(--ink-faint); border-radius: 20px; transition: all 0.15s ease;
+  }
+  .filter-chip.active { background: var(--coral); border-color: var(--coral); color: #0a1330; }
+  .grid-products { display: grid; grid-template-columns: 1fr; gap: 12px; }
+  @media (min-width: 600px) { .grid-products { grid-template-columns: repeat(2, 1fr); } }
+  @media (min-width: 980px) { .grid-products { grid-template-columns: repeat(3, 1fr); } }
+  .product-card {
+    padding: 20px 18px; display: flex; flex-direction: column; gap: 10px; border-radius: 4px;
+    transition: transform 0.25s ease, border-color 0.25s ease; min-width: 0;
+  }
+  .product-card:hover { transform: translateY(-3px); border-color: var(--mint); }
+  .product-card.hidden-f { display: none; }
+  .product-card .name { font-family: var(--serif); font-weight: 600; font-size: 16.5px; color: var(--ink); }
+  .product-card .desc { font-size: 13px; color: var(--ink-dim); flex: 1; }
+  .card-foot { margin-top: auto; display: flex; align-items: center; justify-content: space-between; gap: 10px; }
+  .product-card .tag { font-family: var(--mono); font-size: 10px; letter-spacing: 0.05em; text-transform: uppercase; color: var(--mint); }
+  .product-card .open-link { font-family: var(--mono); font-size: 11px; color: var(--cta); white-space: nowrap; opacity: 0.85; transition: opacity 0.15s ease; }
+  .product-card:hover .open-link { opacity: 1; }
+  a.product-card { text-decoration: none; color: inherit; }
+  .grow-note { font-family: var(--mono); font-size: 11px; color: var(--mint); margin-top: 10px; display: flex; align-items: center; gap: 6px; }
+  .grow-note .dot { width: 6px; height: 6px; border-radius: 50%; background: var(--mint); display: inline-block; animation: pulse 2s ease-in-out infinite; }
+  @keyframes pulse { 0%,100%{opacity:.4} 50%{opacity:1} }
+  @media (prefers-reduced-motion: reduce) { .grow-note .dot { animation: none; } }
+
+  .closing { text-align: center; padding-block: 80px 70px; }
+  .closing h2 { font-weight: 820; font-size: clamp(26px, 5vw, 40px); max-width: 17ch; margin: 0 auto; }
+  .closing .lede { margin: 16px auto 0; max-width: 48ch; color: var(--ink-dim); font-size: 15.5px; }
+  .signoff { margin-top: 36px; font-family: var(--mono); font-size: 11px; color: var(--ink-faint); display: flex; justify-content: center; flex-wrap: wrap; gap: 8px 24px; }
+  .signoff b { color: var(--ink-dim); font-weight: 500; }
+</style>
+</head>
+<body>
+
+<div class="wrap">
+
+  <section class="hero col">
+    <div class="eyebrow">MASTERVIBE · ЗАДАЧА ОТ ОСНОВАТЕЛЯ</div>
+    <div class="hero-grid">
+      <div>
+        <h1>Основатель поставил задачу —<br><em>заработать 5 000 000 ₸.</em></h1>
+        <p class="lede">
+          Это всё, что требовалось от человека. Искать компании, читать их профили,
+          вести переписку, помнить про этапы сделки — всё это берёт на себя Командный
+          центр сам. От основателя — поставить цель, иногда сказать «да» или поправить
+          одно слово, и забрать результат. Вот как это выглядит на примере. Числа —
+          иллюстрация, механика — рабочая.
+        </p>
+      </div>
+      <div class="ring-wrap">
+        <svg class="ring-svg" viewBox="0 0 120 120">
+          <circle cx="60" cy="60" r="52" fill="none" stroke="rgba(255,255,255,0.08)" stroke-width="10"/>
+          <circle id="ringFg" cx="60" cy="60" r="52" fill="none" stroke="#f0c15c" stroke-width="10" stroke-linecap="round"
+            stroke-dasharray="326.7" stroke-dashoffset="326.7" transform="rotate(-90 60 60)"/>
+        </svg>
+        <div class="ring-center">
+          <div class="ring-amount" id="ringAmount">3 100 000 ₸</div>
+          <div class="ring-target">из 5 000 000 ₸ цели</div>
+          <div class="ring-pct" id="ringPct">62%</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="brief-row">
+      <div class="brief-tile glass"><div class="v">5 000 000 ₸</div><div class="k">Цель на месяц</div></div>
+      <div class="brief-tile glass"><div class="v" id="briefActual">3 100 000 ₸</div><div class="k">Факт на утро</div></div>
+      <div class="brief-tile glass"><div class="v" id="briefGap">1 900 000 ₸</div><div class="k">Разрыв</div></div>
+      <div class="brief-tile glass"><div class="v">2</div><div class="k">Действия нужны от вас сегодня</div></div>
+    </div>
+  </section>
+
+  <section class="col">
+    <div class="kicker">Одна сделка, от начала до конца</div>
+    <h2 class="title">Семь ролей передают эстафету друг другу</h2>
+    <p class="lede-col">Это один сквозной путь одного клиента — каждый шаг начинается с того, что передала предыдущая роль. Сколько именно времени между шагами у настоящей сделки — зависит от клиента, не от часов. Нажимайте «Далее»: искать, писать и помнить про этапы вам не придётся — только один момент требует именно вашего решения.</p>
+
+    <div class="railwrap">
+      <div class="rail" id="rail">
+        <div class="rail-node" data-r="0"><div class="dot" data-icon="search"></div><div class="lbl">Lead<br>Hunter</div></div>
+        <div class="rail-line" data-rl="0"></div>
+        <div class="rail-node" data-r="1"><div class="dot" data-icon="book"></div><div class="lbl">Исследо-<br>ватель</div></div>
+        <div class="rail-line" data-rl="1"></div>
+        <div class="rail-node" data-r="2"><div class="dot" data-icon="target"></div><div class="lbl">Подбор<br>решения</div></div>
+        <div class="rail-line" data-rl="2"></div>
+        <div class="rail-node" data-r="3"><div class="dot" data-icon="check"></div><div class="lbl">Основа-<br>тель</div></div>
+        <div class="rail-line" data-rl="3"></div>
+        <div class="rail-node" data-r="4"><div class="dot" data-icon="chat"></div><div class="lbl">Tabysker</div></div>
+        <div class="rail-line" data-rl="4"></div>
+        <div class="rail-node" data-r="5"><div class="dot" data-icon="grid"></div><div class="lbl">Sales<br>Desk</div></div>
+        <div class="rail-line" data-rl="5"></div>
+        <div class="rail-node" data-r="6"><div class="dot" data-icon="chart"></div><div class="lbl">Revenue<br>Director</div></div>
+      </div>
+    </div>
+
+    <div class="stepper" id="stepper"></div>
+
+    <div class="stage glass">
+      <div class="panel active" data-step="0">
+        <div class="stage-head"><div><span class="stage-role">1 · Lead Hunter находит компанию</span><div class="stage-title">«Фитнес-клуб Дыхание» — первая зацепка</div></div><span class="example-tag">пример</span></div>
+        <div class="stage-body">
+          <p class="reveal-line" style="animation-delay:.05s">Сканирует открытые источники — сайты, карты, соцсети — и находит настоящий бизнес с контактами, не выдумывает список.</p>
+          <div class="fact-card reveal-line" style="animation-delay:.3s"><b>ТОО «Фитнес-клуб Дыхание»</b><br>Instagram: 4 200 подписчиков · вопросы под постами без ответа 2–3 дня</div>
+          <p class="hint reveal-line" style="animation-delay:.5s">Дальше — карточка компании уходит Исследователю.</p>
+        </div>
+      </div>
+      <div class="panel" data-step="1">
+        <div class="stage-head"><div><span class="stage-role">2 · Исследователь получил карточку от Hunter</span><div class="stage-title">Изучает именно эту компанию</div></div><span class="example-tag">пример</span></div>
+        <div class="stage-body">
+          <p class="reveal-line" style="animation-delay:.05s">Проверяет, чем компания живёт на самом деле — не предполагает, а читает открытые источники.</p>
+          <div class="fact-card reveal-line" style="animation-delay:.3s">Клубу 2 года, два филиала, групповые тренировки — основной поток. Администратор отвечает в Instagram вручную, только в рабочие часы.</div>
+          <p class="hint reveal-line" style="animation-delay:.5s">Дальше — находки уходят в Подбор решения.</p>
+        </div>
+      </div>
+      <div class="panel" data-step="2">
+        <div class="stage-head"><div><span class="stage-role">3 · Подбор решения по фактам Исследователя</span><div class="stage-title">Сопоставляет с реальным продуктом</div></div><span class="example-tag">пример</span></div>
+        <div class="stage-body">
+          <p class="reveal-line" style="animation-delay:.05s">Читает именно то, что нашёл Исследователь, и ищет подходящий продукт в каталоге MasterVibe — не предлагает наугад.</p>
+          <div class="fact-card reveal-line" style="animation-delay:.3s"><b>Tabysker</b> — AI-продавец в WhatsApp, Telegram и Instagram. Подходит: отвечает мгновенно и без выходных, пока администратор занят в зале.</div>
+          <p class="hint reveal-line" style="animation-delay:.5s">Дальше — черновик первого сообщения уходит основателю.</p>
+        </div>
+      </div>
+      <div class="panel" data-step="3">
+        <div class="stage-head"><div><span class="stage-role">4 · Основатель · решаете вы</span><div class="stage-title">Черновик для «Фитнес-клуба Дыхание» готов</div></div></div>
+        <div class="stage-body">
+          <div class="edit-hint reveal-line" style="animation-delay:.02s">✎ не нравится слово — кликните в текст и поправьте, прежде чем утвердить</div>
+          <div class="draft-box reveal-line" id="draftBox" contenteditable="true" spellcheck="false" style="animation-delay:.05s">
+            «Здравствуйте! Пишу от MasterVibe — мы делаем AI-инструменты, которые помогают
+            бизнесу не терять входящие заявки. Заметили, что в Instagram «Фитнес-клуба
+            Дыхание» вопросы под постами иногда остаются без ответа пару дней — подумал,
+            AI-продавец в WhatsApp мог бы снять часть этой нагрузки. Если интересно, могу
+            за 2 минуты показать, как это работает?»
+          </div>
+          <div class="approve-row reveal-line" style="animation-delay:.3s">
+            <button class="btn" id="approveBtn" onclick="approveDraft()">Утвердить и отправить</button>
+            <span class="approved-note" id="approvedNote">✓ отправлено — ровно в этом виде</span>
+          </div>
+          <p class="hint reveal-line" style="animation-delay:.45s">Ни одно сообщение клиенту не уходит без этого клика. За весь день — именно он.</p>
+        </div>
+      </div>
+      <div class="panel" data-step="4">
+        <div class="stage-head"><div><span class="stage-role">5 · Tabysker подхватывает разговор</span><div class="stage-title">Клиент ответил на то самое сообщение</div></div><span class="example-tag">пример</span></div>
+        <p class="reveal-line" style="animation-delay:.05s; margin-bottom:10px">Администратор «Фитнес-клуба Дыхание» написал в ответ на сообщение, которое вы утвердили шагом раньше. Дальше разговор ведёт Tabysker сам.</p>
+        <div class="chat" id="chatBox">
+          <div class="bubble client">Здравствуйте! А сколько стоит безлимит?</div>
+          <div class="bubble ai">Добрый день! Есть несколько вариантов — зависит от зала и времени. Вам больше утро-день или вечером обычно?</div>
+          <div class="bubble client">Вечером, после работы</div>
+          <div class="bubble ai">Вечерний безлимит — 14 900 ₸/мес, самый популярный поток у нас 🙂 Рассказать, что входит, или сразу интересна цена?</div>
+          <div class="bubble client">Что входит — интересно</div>
+          <div class="bubble ai">Все групповые тренировки, зал и раздевалка с полотенцами. Пробное занятие бесплатно — можно сначала посмотреть зал вживую.</div>
+          <div class="bubble client">Давайте пробное, хочу зайти на этой неделе</div>
+          <div class="bubble ai">Супер! Передаю администратору — подберёт время и сразу запишет вас.</div>
+          <div class="typing" id="typingDots">печатает…</div>
+        </div>
+      </div>
+      <div class="panel" data-step="5">
+        <div class="stage-head"><div><span class="stage-role">6 · Sales Desk ведёт ту же сделку</span><div class="stage-title">«Фитнес-клуб Дыхание» едет по этапам</div></div></div>
+        <div class="stage-body">
+          <p class="reveal-line" style="animation-delay:.05s">Тот самый разговор, что согласился на пробное занятие, стал записью сделки — не отдельной бумажкой.</p>
+          <div class="kanban" id="kanban">
+            <div class="kcol"><div class="kcol-label">Контакт</div><div class="kcard" data-k="0">Фитнес-клуб «Дыхание»</div></div>
+            <div class="kcol"><div class="kcol-label">Переговоры</div><div class="kcard" data-k="1">Фитнес-клуб «Дыхание»</div></div>
+            <div class="kcol"><div class="kcol-label">Договор</div><div class="kcard" data-k="2">Фитнес-клуб «Дыхание»</div></div>
+            <div class="kcol"><div class="kcol-label">Оплачено</div><div class="kcard" data-k="3">Фитнес-клуб «Дыхание»</div></div>
+          </div>
+          <p class="hint" style="margin-top:4px">Система сама напоминает о просрочках на каждом этапе — не держится на чьей-то памяти.</p>
+        </div>
+      </div>
+      <div class="panel" data-step="6">
+        <div class="stage-head"><div><span class="stage-role">7 · Деньги на счету</span><div class="stage-title">Та же сделка, с которой всё началось</div></div></div>
+        <div class="stage-body">
+          <div class="summary-grid">
+            <div class="summary-tile"><div class="bignum">+420 000 ₸</div><div class="label">к факту месяца</div></div>
+            <div class="summary-tile"><div class="bignum">0</div><div class="label">сообщений написал основатель лично</div></div>
+            <div class="summary-tile"><div class="bignum">1</div><div class="label">клик, который требовался за день</div></div>
+          </div>
+        </div>
+      </div>
+      <div class="panel" data-step="7">
+        <div class="stage-head"><div><span class="stage-role">8 · Revenue Director подводит итог</span><div class="stage-title">Прочитать три строки — и всё</div></div></div>
+        <div class="stage-body">
+          <p class="reveal-line" style="animation-delay:.05s">Факт обновлён до <b style="color:var(--ink)">3 520 000 ₸</b>. Разрыв до цели сократился до <b style="color:var(--ink)">1 480 000 ₸</b>.</p>
+          <p class="hint reveal-line" style="animation-delay:.2s">Основателю остаётся прочитать три эти строки — и, если что-то не нравится, поправить именно это, а не писать отчёт заново самому.</p>
+          <p class="hint reveal-line" style="animation-delay:.35s">Параллельно Тайный покупатель успел проверить другой ваш филиал и прислал оценку ответов — 78 из 100. Отдельная, независимая проверка, не часть этой сделки.</p>
+          <div class="approve-row reveal-line" style="animation-delay:.45s"><button class="btn ghost" onclick="restartSim()">Пройти ещё раз</button></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="stage-foot">
+      <span class="hint" id="footHint">Шаг 1 из 7</span>
+      <div style="display:flex; gap:10px;">
+        <button class="btn ghost" id="backBtn" onclick="prevStep()">← Назад</button>
+        <button class="btn" id="nextBtn" onclick="nextStep()">Далее →</button>
+      </div>
+    </div>
+  </section>
+
+  <section class="divider col fade">
+    <div class="kicker">За счёт чего это выгоднее</div>
+    <h2 class="title">Не потому что AI умнее. Потому что у него нет потолка</h2>
+    <p class="lede-col">Разница — в структуре расходов и скорости, а не в волшебстве.</p>
+    <div class="compare">
+      <div class="compare-head"><span class="left">Обычная компания</span><span class="right">Цифровая компания</span></div>
+      <div class="compare-row">
+        <div class="ccell left"><b>Рост нагрузки</b>Больше клиентов — нужно больше менеджеров, их обучение и зарплата</div>
+        <div class="ccell right"><b>Рост нагрузки</b>Та же команда отвечает в трёх каналах сразу, без найма</div>
+      </div>
+      <div class="compare-row">
+        <div class="ccell left"><b>Скорость ответа</b>Клиент ждёт, пока освободится человек — часы, иногда дни</div>
+        <div class="ccell right"><b>Скорость ответа</b>Ответ за секунды, круглосуточно, без выходных</div>
+      </div>
+      <div class="compare-row">
+        <div class="ccell left"><b>Текучка кадров</b>Сотрудник уходит — уходит его опыт и часть клиентской базы</div>
+        <div class="ccell right"><b>Текучка кадров</b>Каждый диалог и сделка остаются в системе навсегда</div>
+      </div>
+      <div class="compare-row">
+        <div class="ccell left"><b>Расходы</b>Зарплата идёт независимо от результата</div>
+        <div class="ccell right"><b>Расходы</b>Траты на AI — это стоимость конкретных действий, с дневным потолком</div>
+      </div>
+      <div class="compare-row">
+        <div class="ccell left"><b>Новая возможность</b>Нужен поиск и найм специалиста — недели или месяцы</div>
+        <div class="ccell right"><b>Новая возможность</b>Включается в коде за часы — так сегодня Tabysker получил управление каналами прямо из Командного центра</div>
+      </div>
+    </div>
+    <p class="compare-note">Разница не в том, что AI умнее человека. Разница в том, что у него нет предела, сколько клиентов он обслужит одновременно, и нет зарплаты, которая растёт сама по себе.</p>
+  </section>
+
+  <section class="divider col fade">
+    <div class="kicker">Шире, чем один бизнес</div>
+    <h2 class="title">Цифровая компания — не исключение, а следующий шаг</h2>
+    <p class="lede-col">Каждая технологическая волна снижала число людей, нужных для того же результата. Это не предсказание — это уже случалось четыре раза.</p>
+
+    <div class="eras">
+      <div class="era glass"><span class="yr">1980-е</span><h3>Персональный компьютер</h3><p>Один бухгалтер с таблицей делает то, на что раньше уходил отдел.</p></div>
+      <div class="era glass"><span class="yr">1990-е</span><h3>Интернет</h3><p>Компания из двух человек продаёт по всему миру — без сети филиалов.</p></div>
+      <div class="era glass"><span class="yr">2010-е</span><h3>Облако</h3><p>Стартап запускается без своего дата-центра и отдела системных администраторов.</p></div>
+      <div class="era glass now"><span class="yr">Сейчас</span><h3>AI-оркестрация</h3><p>Один основатель получает отдел продаж, исследования, контроля качества и финансов.</p></div>
+    </div>
+
+    <div class="trend-argument">
+      <p>Ни разу технология не делала людей ненужными. Каждый раз она забирала у команды рутину — и то, что раньше требовало отдела, стало требовать одного человека с правильным инструментом.</p>
+      <p><b>Разница на этот раз — скорость.</b> Персональный компьютер отвоёвывал задачи у бухгалтерии годами. AI-роль, которая сегодня не умела читать базу знаний компании, завтра может уметь — это обновление кода, а не обучение нового сотрудника.</p>
+      <p><b>У этого есть структурное следствие.</b> Компания, которая строит процессы вокруг цифрового коллектива с первого дня, получает преимущество, которое трудно скопировать компании с уже нанятым отделом продаж из десяти человек — ей придётся не подключить инструмент, а менять структуру, которая уже живёт на зарплатной ведомости.</p>
+      <p style="color:var(--ink-faint); font-size:14px">У каталога на этой странице нет финальной версии. То, что сегодня — двенадцать направлений, через полгода будет другим числом.</p>
+    </div>
+  </section>
+
+  <section class="divider col fade">
+    <div class="kicker">Что это уже продаёт</div>
+    <h2 class="title">Не один продукт. Линейка</h2>
+    <p class="lede-col">Двенадцать направлений в одном каталоге. Нажмите тег, чтобы отфильтровать.</p>
+    <div class="filters" id="filters">
+      <span class="filter-chip active" data-f="all">Все</span>
+      <span class="filter-chip" data-f="AI-продажи">AI-продажи</span>
+      <span class="filter-chip" data-f="Финансы">Финансы</span>
+      <span class="filter-chip" data-f="Операционка">Операционка</span>
+      <span class="filter-chip" data-f="Качество">Качество</span>
+      <span class="filter-chip" data-f="Платформа">Платформа</span>
+    </div>
+    <div class="grid-products" id="productGrid">
+      <a class="product-card glass" data-tag="AI-продажи" href="https://mastervibe-kz.netlify.app/tabysker/demo/" target="_blank" rel="noopener"><div class="name">Tabysker</div><div class="desc">AI-продавец в WhatsApp, Telegram и Instagram — понимает голосовые, передаёт менеджеру то, что требует человека.</div><div class="card-foot"><span class="tag">AI-продажи</span><span class="open-link">смотреть →</span></div></a>
+      <a class="product-card glass" data-tag="Операционка" href="https://mastervibe-kz.netlify.app/digital-admin/" target="_blank" rel="noopener"><div class="name">Цифровой администратор</div><div class="desc">Посещаемость, абонементы, оплаты и напоминания родителям — для клубов и школ.</div><div class="card-foot"><span class="tag">Операционка</span><span class="open-link">смотреть →</span></div></a>
+      <a class="product-card glass" data-tag="Качество" href="https://mastervibe-kz.netlify.app/financial-guard/" target="_blank" rel="noopener"><div class="name">Финансовый охранник</div><div class="desc">Каждый платёж сотрудника проходит через правило — пропустить, согласовать или остановить.</div><div class="card-foot"><span class="tag">Контроль</span><span class="open-link">смотреть →</span></div></a>
+      <a class="product-card glass" data-tag="Качество" href="https://mastervibe-kz.netlify.app/mystery-shopper/" target="_blank" rel="noopener"><div class="name">Тайный покупатель</div><div class="desc">Анонимно проверяет, как на самом деле отвечают сотрудники, и даёт оценку с рекомендациями.</div><div class="card-foot"><span class="tag">Качество</span><span class="open-link">смотреть →</span></div></a>
+      <a class="product-card glass" data-tag="Финансы" href="https://mastervibe-kz.netlify.app/finance/#models" target="_blank" rel="noopener"><div class="name">Финансовые модели</div><div class="desc">Бюджет на 12–36 месяцев и три сценария — под кредит, грант или инвестора.</div><div class="card-foot"><span class="tag">Финансы</span><span class="open-link">смотреть →</span></div></a>
+      <a class="product-card glass" data-tag="Финансы" href="https://mastervibe-kz.netlify.app/finance/#ideas" target="_blank" rel="noopener"><div class="name">Проверка бизнес-идеи</div><div class="desc">Спрос, конкуренты и нужные вложения — до того, как деньги уже потрачены.</div><div class="card-foot"><span class="tag">Финансы</span><span class="open-link">смотреть →</span></div></a>
+      <a class="product-card glass" data-tag="Платформа" href="https://mastervibe-kz.netlify.app/command-center/" target="_blank" rel="noopener"><div class="name">Command Center</div><div class="desc">Тот же цифровой операционный центр, что управляет MasterVibe, — как продукт для чужого бизнеса. Новая возможность добавляется почти каждую неделю.</div><div class="card-foot"><span class="tag">Платформа</span><span class="open-link">смотреть →</span></div></a>
+      <a class="product-card glass" data-tag="AI-продажи" href="https://ai-navigator-business.vercel.app" target="_blank" rel="noopener"><div class="name">AI Навигатор бизнеса</div><div class="desc">План на 30–60–90 дней за десять минут, без регистрации.</div><div class="card-foot"><span class="tag">Бесплатно</span><span class="open-link">смотреть →</span></div></a>
+      <a class="product-card glass" data-tag="Операционка" href="https://mastervibe-kz.netlify.app/" target="_blank" rel="noopener"><div class="name">Индивидуальная разработка</div><div class="desc">AI-сотрудники, боты и личные кабинеты под задачу, которой ещё нет в каталоге.</div><div class="card-foot"><span class="tag">На заказ</span><span class="open-link">смотреть →</span></div></a>
+    </div>
+    <div class="grow-note"><span class="dot"></span> каталог не стоит на месте — список выше уже не тот, что был месяц назад</div>
+  </section>
+
+  <section class="closing col-narrow">
+    <div class="eyebrow">СЕЙЧАС, В ЭТУ МИНУТУ</div>
+    <h2 style="margin-top:16px">Компания не спит</h2>
+    <p class="lede">Пока вы читали это, где-то в Алматы цифровой продавец отвечает человеку, который только что написал в WhatsApp. Завтра утром Командный центр снова посчитает факт и цель. Остальное компания делает сама.</p>
+    <p class="lede" style="margin-top:14px; font-size:14px; color:var(--ink-faint)">Эта страница тоже не финальная версия MasterVibe — она собрана на данных сегодняшнего дня. Какой она станет через полгода, зависит от того, кто рядом с компанией в следующей главе.</p>
+    <div class="signoff"><span><b>MasterVibe</b> · Алматы, Казахстан</span><span>Tabysker · Command Center · Sales Desk</span></div>
+  </section>
+
+</div>
+
+<script>
+(function () {
+  try {
+    var STROKE = 'fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"';
+    var ICONS = {
+      search: '<circle cx="10" cy="10" r="6" ' + STROKE + '/><line x1="15" y1="15" x2="20" y2="20" ' + STROKE + '/>',
+      book: '<path d="M4 5.5c2-1.3 5-1.3 8 0v13.5c-3-1.3-6-1.3-8 0V5.5z" ' + STROKE + '/><path d="M20 5.5c-2-1.3-5-1.3-8 0v13.5c3-1.3 6-1.3 8 0V5.5z" ' + STROKE + '/>',
+      target: '<circle cx="12" cy="12" r="8" ' + STROKE + '/><circle cx="12" cy="12" r="4" ' + STROKE + '/><circle cx="12" cy="12" r="1" fill="currentColor" stroke="none"/>',
+      check: '<circle cx="12" cy="12" r="9" ' + STROKE + '/><polyline points="8 12.3 10.8 15.3 16 9" ' + STROKE + '/>',
+      chat: '<path d="M4 5h16v11H9.5L4.5 20 4 16.2V5z" ' + STROKE + '/>',
+      grid: '<rect x="4" y="4" width="7" height="7" fill="currentColor"/><rect x="13" y="4" width="7" height="7" fill="currentColor" opacity="0.55"/><rect x="4" y="13" width="7" height="7" fill="currentColor" opacity="0.55"/><rect x="13" y="13" width="7" height="7" fill="currentColor"/>',
+      chart: '<rect x="4.5" y="13" width="4" height="7" fill="currentColor" opacity="0.6"/><rect x="10" y="8" width="4" height="12" fill="currentColor" opacity="0.8"/><rect x="15.5" y="3" width="4" height="17" fill="currentColor"/>',
+    };
+    document.querySelectorAll('[data-icon]').forEach(function (el) {
+      var svg = ICONS[el.getAttribute('data-icon')];
+      if (svg) el.innerHTML = '<svg viewBox="0 0 24 24">' + svg + '</svg>';
+    });
+  } catch (e) {}
+
+  var STEPS = [
+    { label: '1. Поиск' }, { label: '2. Изучение' }, { label: '3. Подбор' }, { label: '4. Решение' },
+    { label: '5. Диалог' }, { label: '6. Сделка' }, { label: '7. Оплата' }, { label: '8. Итог' },
+  ];
+  // Какой узел схемы-конвейера (0..6: Hunter, Исследователь, Подбор, Основатель, Tabysker,
+  // Sales Desk, Revenue) подсвечивать на каждом шаге — два последних шага оба про Revenue.
+  var STEP_TO_RAIL = [0, 1, 2, 3, 4, 5, 6, 6];
+  var current = 0, maxVisited = 0, approved = false;
+
+  var stepperEl = document.getElementById('stepper');
+  STEPS.forEach(function (s, i) {
+    var d = document.createElement('span');
+    d.className = 'step-dot'; d.textContent = s.label; d.dataset.i = i;
+    d.addEventListener('click', function () { if (i <= maxVisited) goTo(i); });
+    stepperEl.appendChild(d);
+  });
+
+  function renderStepper() {
+    Array.prototype.forEach.call(stepperEl.children, function (d, i) {
+      d.classList.toggle('active', i === current);
+      d.classList.toggle('done', i <= maxVisited && i !== current);
+    });
+  }
+
+  var railEl = document.getElementById('rail');
+  function renderRail() {
+    var activeR = STEP_TO_RAIL[current];
+    var maxR = STEP_TO_RAIL[maxVisited];
+    railEl.querySelectorAll('.rail-node').forEach(function (n) {
+      var r = Number(n.dataset.r);
+      n.classList.toggle('active', r === activeR);
+      n.classList.toggle('done', r <= maxR && r !== activeR);
+    });
+    railEl.querySelectorAll('.rail-line').forEach(function (l) {
+      var r = Number(l.dataset.rl);
+      l.classList.toggle('done', r < maxR || (r <= maxR && activeR > r));
+    });
+  }
+
+  function setRing(pct) {
+    var c = 326.7;
+    document.getElementById('ringFg').style.transition = 'stroke-dashoffset 1s ease';
+    document.getElementById('ringFg').setAttribute('stroke-dashoffset', String(c - (c * pct) / 100));
+    document.getElementById('ringPct').textContent = Math.round(pct) + '%';
+  }
+
+  function goTo(i) {
+    current = i; if (i > maxVisited) maxVisited = i;
+    document.querySelectorAll('.panel').forEach(function (p) { p.classList.toggle('active', Number(p.dataset.step) === i); });
+    document.getElementById('footHint').textContent = 'Шаг ' + (i + 1) + ' из ' + STEPS.length;
+    document.getElementById('backBtn').disabled = i === 0;
+    var nextBtn = document.getElementById('nextBtn');
+    if (i === 3) { nextBtn.disabled = !approved; nextBtn.textContent = approved ? 'Далее →' : 'Сначала утвердите'; nextBtn.style.visibility = 'visible'; }
+    else if (i === STEPS.length - 1) { nextBtn.style.visibility = 'hidden'; }
+    else { nextBtn.disabled = false; nextBtn.textContent = 'Далее →'; nextBtn.style.visibility = 'visible'; }
+    renderStepper();
+    renderRail();
+    if (i === 4) playChat();
+    if (i === 5) playKanban();
+    if (i === 6) {
+      setRing(70.4);
+      document.getElementById('ringAmount').textContent = '3 520 000 ₸';
+      document.getElementById('briefActual').textContent = '3 520 000 ₸';
+      document.getElementById('briefGap').textContent = '1 480 000 ₸';
+    }
+    var panel = document.querySelector('.panel.active');
+    if (panel) panel.querySelectorAll('.reveal-line').forEach(function (el) { el.style.animation = 'none'; void el.offsetWidth; el.style.animation = ''; });
+  }
+
+  window.nextStep = function () { if (current < STEPS.length - 1) goTo(current + 1); };
+  window.prevStep = function () { if (current > 0) goTo(current - 1); };
+  window.approveDraft = function () {
+    approved = true;
+    document.getElementById('approvedNote').classList.add('show');
+    document.getElementById('approveBtn').disabled = true;
+    document.getElementById('nextBtn').disabled = false;
+    document.getElementById('nextBtn').textContent = 'Далее →';
+    setTimeout(function () { if (current === 3) nextStep(); }, 650);
+  };
+  window.restartSim = function () {
+    approved = false; maxVisited = 0; setRing(62);
+    document.getElementById('ringAmount').textContent = '3 100 000 ₸';
+    document.getElementById('briefActual').textContent = '3 100 000 ₸';
+    document.getElementById('briefGap').textContent = '1 900 000 ₸';
+    goTo(0);
+  };
+
+  function playChat() {
+    var bubbles = document.querySelectorAll('#chatBox .bubble'); var dots = document.getElementById('typingDots');
+    bubbles.forEach(function (b) { b.classList.remove('show'); }); dots.classList.remove('show');
+    var reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    if (reduced) { bubbles.forEach(function (b) { b.classList.add('show'); }); return; }
+    var delay = 250;
+    bubbles.forEach(function (b) {
+      var isAi = b.classList.contains('ai');
+      if (isAi) setTimeout(function () { dots.classList.add('show'); }, delay - 180);
+      setTimeout(function () { b.classList.add('show'); dots.classList.remove('show'); }, delay);
+      delay += isAi ? 820 : 520;
+    });
+  }
+  function playKanban() {
+    var cards = document.querySelectorAll('#kanban .kcard'); cards.forEach(function (c) { c.classList.remove('live'); });
+    var reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    cards.forEach(function (c, i) { setTimeout(function () { c.classList.add('live'); }, reduced ? 0 : i * 260 + 120); });
+  }
+
+  setRing(62);
+  goTo(0);
+
+  var chips = document.querySelectorAll('.filter-chip'), cards = document.querySelectorAll('#productGrid .product-card');
+  chips.forEach(function (chip) {
+    chip.addEventListener('click', function () {
+      chips.forEach(function (c) { c.classList.remove('active'); }); chip.classList.add('active');
+      var f = chip.dataset.f;
+      cards.forEach(function (card) { card.classList.toggle('hidden-f', f !== 'all' && card.dataset.tag !== f); });
+    });
+  });
+
+  try {
+    var els = document.querySelectorAll('.fade');
+    if ('IntersectionObserver' in window) {
+      var io = new IntersectionObserver(function (entries) {
+        entries.forEach(function (e) { if (e.isIntersecting) { e.target.classList.add('in'); io.unobserve(e.target); } });
+      }, { threshold: 0.1 });
+      els.forEach(function (el) { io.observe(el); });
+    } else { els.forEach(function (el) { el.classList.add('in'); }); }
+  } catch (e) {}
+})();
+</script>
+</body>
+</html>
